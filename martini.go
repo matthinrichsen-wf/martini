@@ -113,11 +113,24 @@ type ClassicMartini struct {
 	Router
 }
 
+// ClassicWithLogger creates a classic Martini with some basic default middleware - martini.Logger, martini.Recovery and martini.Static.
+// ClassicWithLogger also maps martini.Routes as a service.
+// ClassicWithLogger also allows you to specify your own custom logger.
+func ClassicWithLogger(logger *log.Logger) *ClassicMartini {
+	r := NewRouter()
+	m := NewWithLogger(logger)
+	return newClassic(m, r)
+}
+
 // Classic creates a classic Martini with some basic default middleware - martini.Logger, martini.Recovery and martini.Static.
 // Classic also maps martini.Routes as a service.
 func Classic() *ClassicMartini {
 	r := NewRouter()
 	m := New()
+	return newClassic(m, r)
+}
+
+func newClassic(m *Martini, r Router) *ClassicMartini {
 	m.Use(Logger())
 	m.Use(Recovery())
 	m.Use(Static("public"))
