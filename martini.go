@@ -34,12 +34,18 @@ type Martini struct {
 	logger   *log.Logger
 }
 
-// New creates a bare bones Martini instance. Use this method if you want to have full control over the middleware that is used.
-func New() *Martini {
-	m := &Martini{Injector: inject.New(), action: func() {}, logger: log.New(os.Stdout, "[martini] ", 0)}
+// New creates a bare bones Martini instance with the log recorded with the given logger. Use this if you want to have full
+// control of the middleware that is used and want to have specific control of the logger being used.
+func NewWithLogger(logger *log.Logger) *Martini {
+	m := &Martini{Injector: inject.New(), action: func() {}, logger: logger}
 	m.Map(m.logger)
 	m.Map(defaultReturnHandler())
 	return m
+}
+
+// New creates a bare bones Martini instance. Use this method if you want to have full control over the middleware that is used.
+func New() *Martini {
+	return NewWithLogger(log.New(os.Stdout, "[martini] ", 0))
 }
 
 // Handlers sets the entire middleware stack with the given Handlers. This will clear any current middleware handlers.
